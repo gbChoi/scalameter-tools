@@ -92,4 +92,11 @@ object ScalaMeterBuild extends Build {
   ) dependsOn (
   )
 
+  lazy val scalameterTools = Project(
+    "scalameter-tools",
+    file("./tools"),
+    settings = scalaMeterSettings
+  ) dependsOn (
+    scalameter
+  )
 }

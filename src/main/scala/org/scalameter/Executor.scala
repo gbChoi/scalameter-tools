@@ -41,6 +41,12 @@ object Executor {
   }
 
   object Warmer {
+    case class NoWarmer() extends Warmer {
+      def name = "Warmer.NoWarmer"
+      def warming(ctx: Context, setup: () => Any, teardown: () => Any) = new Foreach[Int] {
+        def foreach[U](f:Int => U): Unit = {}
+      }
+    }
 
     case class Default() extends Warmer {
       def name = "Warmer.Default"
