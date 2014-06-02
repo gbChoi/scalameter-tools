@@ -439,6 +439,53 @@ object Executor {
       override def eliminateLow = true
     }
 
+    class MethodCall(var traceMethod:String) extends IterationBasedValue {
+      def name = "Measurer.MethodCall"
+      
+      import java.io.File
+      import scala.io.Source
+        
+      private def startFlag():Unit = Nil
+      
+      private def endFlag():Unit = Nil
+
+      def measure[T, U](context: Context, measurements: Int, setup: T => Any, tear: T => Any, regen: () => T, snippet: T => Any): Seq[Double] = {
+        var iteration = 0
+        var counts = List[Double]()
+        var value = regen()
+        traceMethod = traceMethod.replace('.', '/')
+        
+        while (iteration < measurements) {
+          val file = new File("MethodCallDump")
+          value = valueAt(context, iteration, regen, value)
+          setup(value)
+          
+          file.delete
+          
+          startFlag()
+          snippet(value)
+          endFlag()
+
+          if (!file.exists) {
+            sys.error("Agent doesn't attach to jvm, please attach it before execution")
+          }
+          else {
+            var i = 0;
+            for (line <- Source.fromFile(file).getLines) {
+              if (line.drop(1).replace("$;", "/").replace('$', '/').replace(';', '/').equals(traceMethod))
+                i+=1
+            }
+            counts ::= i
+          }
+          
+          file.delete
+          
+          tear(value)
+          iteration += 1
+        }
+        counts
+      }
+    }
   }
 
 }
