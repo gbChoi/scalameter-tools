@@ -1,6 +1,6 @@
 package org.scalameter
 
-package object tools extends MeasureBuilder(Context.topLevel ++ Context(Key.exec.benchRuns -> 1), Executor.Warmer.NoWarmer(), null, null) {
+package object tools extends MeasureBuilder(Context.topLevel ++ Context(Key.exec.benchRuns -> 1), Executor.Warmer.NoWarmer(), null, null, null, null) {
   type Measurer = org.scalameter.Executor.Measurer
   type MemoryFootprint = org.scalameter.Executor.Measurer.MemoryFootprint
   type MethodCall = org.scalamter.Executor.Measurer.MethodCall
